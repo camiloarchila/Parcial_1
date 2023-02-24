@@ -37,7 +37,7 @@ public class HttpServer {
             String param ="";
             Method[] listmethods;
             Field[] listfields;
-            Class[] classes;
+            Class[] classes = new Class[]{};
 
             while ((inputLine = in.readLine()) != null) {
                 System.out.println("Recibí: " + inputLine);
@@ -71,7 +71,14 @@ public class HttpServer {
                     methodName = inputLine.split("=invoke")[1].split("HTTP")[0].replace("(", "").replace(")", "").replace(" ", "").split(",")[1];
                     paramType = inputLine.split("=invoke")[1].split("HTTP")[0].replace("(", "").replace(")", "").replace(" ", "").split(",")[2];
                     param = inputLine.split("=invoke")[1].split("HTTP")[0].replace("(", "").replace(")", "").replace(" ", "").split(",")[3];
-
+                    if(paramType == "String"){
+                         classes = new Class[]{String.class};
+                    }else if(paramType == "int"){
+                        classes = new Class[]{int.class};
+                    }else if(paramType == "double"){
+                        classes = new Class[]{double.class};
+                    }
+                    outputLine = getHeader() + Class.forName(classname).getDeclaredMethod(methodName, classes).invoke(param);
                 }
             }
             out.println(outputLine);
@@ -81,16 +88,6 @@ public class HttpServer {
         }
         clientSocket.close();
         serverSocket.close();
-    }
-
-    private Class[] getType(String paramType){
-        if(paramType == "String"){
-            return new
-        }else if(paramType == "int"){
-
-        }else if(paramType == "double"){
-
-        }
     }
     private static String getHeader(){
         return "HTTP/1.1 200 OK\r\n"
